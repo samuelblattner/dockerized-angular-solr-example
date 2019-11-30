@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ir-index
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+      matchLabels:
+        app: ir-index
+  template:
+    metadata:
+      labels:
+        app: ir-index
+    spec:
+      containers:
+        - name: apache-solr
+          image: solr:8.3.0
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-entry-point
+spec:
+  selector:
+    app: ir-index
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8983
+      nodePort: 30002
