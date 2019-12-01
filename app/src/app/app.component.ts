@@ -12,7 +12,7 @@ export class AppComponent {
 
   public constructor(private http: HttpClient) {
 
-    http.get<{response: any}>('/solr/mycore/query?q='+encodeURIComponent('*:*')).subscribe(resp => {
+    http.get<{response: any}>('/solr/summaries/query?q='+encodeURIComponent('*:*')).subscribe(resp => {
       this.docs = resp.response.docs.map(d => JSON.stringify(d));
     })
   }

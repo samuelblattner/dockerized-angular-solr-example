@@ -1,0 +1,29 @@
+version: '3.5'
+services:
+  angular:
+    container_name: 'Angular-Frontend'
+    build: ./
+    volumes:
+      - './app:/usr/src/app'
+    ports:
+      - '8080:8080'
+    command: bash -c "cp /etc/nginx/sites-available/app.dev.conf /etc/nginx/sites-enabled/ && touch /etc/nginx/sites-enabled/default && rm /etc/nginx/sites-enabled/default && service nginx restart && npm install && ng serve --public-host http://localhost --port 4200"
+
+  solr:
+    container_name: 'Apache-Solr'
+    volumes:
+        - solr_cores_dev:/var/solr/data/
+    image: solr:8.3.0
+    command: bash -c "mkdir -p /var/solr/data/summaries/ && cp -R /opt/solr-8.3.0/server/solr/configsets/_default/conf /var/solr/data/summaries && solr start && tail -f /dev/null"
+
+  python:
+    container_name: 'Python-Scripts'
+    image: python:3.7
+    volumes:
+      - './solr:/usr/scripts'
+    command: bash -c "pip install progressbar2 && python /usr/scripts/create_index.py --base_url=http://solr:8983"
+    depends_on:
+      - solr
+
+volumes:
+  solr_cores_dev:
