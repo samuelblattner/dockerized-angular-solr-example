@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema name="default-config" version="1.6">
+    <uniqueKey>id</uniqueKey>
+
+    <!-- Field Types -->
+    <fieldType name="pint" class="solr.IntPointField" docValues="true"/>
+    <fieldType name="plong" class="solr.LongPointField" docValues="true"/>
+    <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true"/>
+    <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100" multiValued="true">
+        <analyzer type="index">
+            <tokenizer class="solr.StandardTokenizerFactory"/>
+            <filter class="solr.StopFilterFactory" words="lang/stopwords_de.txt" ignoreCase="true"/>
+            <filter class="solr.LowerCaseFilterFactory"/>
+        </analyzer>
+        <analyzer type="query">
+            <tokenizer class="solr.StandardTokenizerFactory"/>
+            <filter class="solr.StopFilterFactory" words="lang/stopwords_de.txt" ignoreCase="true"/>
+            <filter class="solr.LowerCaseFilterFactory"/>
+        </analyzer>
+    </fieldType>
+    <fieldType name="text_general_rev" class="solr.TextField" positionIncrementGap="100">
+        <analyzer type="index">
+            <tokenizer class="solr.StandardTokenizerFactory"/>
+            <filter class="solr.StopFilterFactory" words="lang/stopwords_de.txt" ignoreCase="true"/>
+            <filter class="solr.LowerCaseFilterFactory"/>
+            <filter class="solr.ReversedWildcardFilterFactory" maxPosQuestion="2" maxFractionAsterisk="0.33" maxPosAsterisk="3" withOriginal="true"/>
+        </analyzer>
+        <analyzer type="query">
+            <tokenizer class="solr.StandardTokenizerFactory"/>
+            <filter class="solr.StopFilterFactory" words="lang/stopwords_de.txt" ignoreCase="true"/>
+            <filter class="solr.LowerCaseFilterFactory"/>
+        </analyzer>
+    </fieldType>
+
+    <!-- Fields -->
+    <field name="_root_" type="string" docValues="false" indexed="true" stored="false"/>
+    <field name="_text_" type="text_general" multiValued="true" indexed="true" stored="false"/>
+    <field name="_version_" type="plong" indexed="false" stored="false"/>
+
+    <field name="id" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
+
+    <field name="topic" type="string" multiValued="true" />
+
+    <field name="text" type="text_general"/>
+    <field name="text_length" type="pint"/>
+    <field name="text_num_nouns" type="pint"/>
+    <field name="text_num_verbs" type="pint"/>
+    <field name="text_num_dates" type="pint"/>
+
+    <field name="summary" type="text_general"/>
+    <field name="summary_length" type="pint"/>
+    <field name="summary_num_nouns" type="pint"/>
+    <field name="summary_num_verbs" type="pint"/>
+    <field name="summary_num_dates" type="pint"/>
+
+    <dynamicField name="*_txt_rev" type="text_general_rev" indexed="true" stored="true"/>
+
+    <copyField source="id" dest="_text_" maxChars="32"/>
+    <copyField source="text" dest="_text_" maxChars="32768"/>
+    <copyField source="summary" dest="_text_" maxChars="32768"/>
+</schema>

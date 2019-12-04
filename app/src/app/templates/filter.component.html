@@ -1,0 +1,34 @@
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Filter</mat-panel-title>
+      <mat-panel-description>Some stuff</mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <form [formGroup]="filterForm">
+      <mat-select [formControlName]="'topic'">
+        <mat-option></mat-option>
+      </mat-select>
+      <mat-form-field appearance="fill">
+        <input type="number" [formControlName]="'day'" matInput/>
+      </mat-form-field>
+      <mat-select [formControlName]="'month'">
+
+      </mat-select>
+      <mat-form-field appearance="fill">
+        <input type="number" [formControlName]="'year'" matInput/>
+      </mat-form-field>
+
+      <mat-slider [formControlName]="'nChars'"></mat-slider>
+    </form>
+
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Anzeige</mat-panel-title>
+      <mat-panel-description>Some stuff</mat-panel-description>
+    </mat-expansion-panel-header>
+
+
+  </mat-expansion-panel>
+</mat-accordion>

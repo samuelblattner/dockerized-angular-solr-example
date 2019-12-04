@@ -1,3 +1,4 @@
+import re
 import sys
 from argparse import ArgumentParser
 from http.client import RemoteDisconnected
@@ -9,6 +10,8 @@ import csv
 import hashlib
 import json
 import progressbar
+import spacy
+
 
 bar = progressbar.ProgressBar()
 last_count = 0
@@ -38,8 +41,10 @@ def flush_batch(batch, url):
 
 if __name__ == '__main__':
 
+    nlp = spacy.load('de_core_news_sm', disable=['parser', 'ner', 'textcat'])
+
     # Batch size to feed to solr
-    BATCH_SIZE = 1000
+    BATCH_SIZE = 50
 
     parser = ArgumentParser()
     parser.add_argument('--base_url', required=True)
@@ -69,7 +74,8 @@ if __name__ == '__main__':
                 exit(1)
 
     # Download summarization data to fill index
-    sys.stdout.write('\nDownloading summarization data...')
+    sys.stdout.write('\nDownloading summarization data...\n')
+    sys.stdout.flush()
     bar.widgets = [
         'Download progress: ', progressbar.Bar(), ' ', progressbar.Counter()
     ]
@@ -82,6 +88,7 @@ if __name__ == '__main__':
 
     # Load data into index
     sys.stdout.write('Filling index...')
+    sys.stdout.flush()
 
     with open('/tmp/data_train.csv', 'r') as f:
         reader = csv.DictReader(f)
@@ -94,18 +101,48 @@ if __name__ == '__main__':
         bar.update(0)
 
         batch = []
+        batch_texts = []
+        batch_summaries = []
+        date_regex = r'(\d{1,2}\.(\d{1,2}\.|\s\w{1,14}\s)\d{4})'
 
-        for row in reader:
-            hash = hashlib.md5(row.get('source').encode('utf-8')).hexdigest()
+        for r, row in enumerate(reader):
+
+            text = row.get('source')
+            batch_texts.append(text)
+            summary = row.get('summary')
+            batch_summaries.append(summary)
+
             batch.append(
-                {'hash': hash,
-                 'text': row.get('source'),
-                 'summary': row.get('summary')}
+                {
+                    'id': hashlib.md5('{}{}'.format(text, summary).encode('utf-8')).hexdigest(),
+
+                    'text': text,
+                    'text_length': len(text.split(' ')),
+                    'text_num_dates': len(re.findall(date_regex, text)),
+
+                    'summary': summary,
+                    'summary_length': len(summary.split(' ')),
+                    'summary_num_dates': len(re.findall(date_regex, summary)),
+                }
             )
 
             if len(batch) > BATCH_SIZE:
+
+                text_tags_batch = list(nlp.pipe(batch_texts, disable=['parser', 'ner', 'textcat']))
+                text_nouns_batch = [sum([1 for tag in tags if tag.pos_ == 'NOUN']) for tags in text_tags_batch]
+                text_verbs_batch = [sum([1 for tag in tags if tag.pos_ in ('VERB', 'AUX')]) for tags in text_tags_batch]
+
+                summary_tags_batch = list(nlp.pipe(batch_summaries, disable=['parser', 'ner', 'textcat']))
+                summary_nouns_batch = [sum([1 for tag in tags if tag.pos_ == 'NOUN']) for tags in summary_tags_batch]
+                summary_verbs_batch = [sum([1 for tag in tags if tag.pos_ in ('VERB', 'AUX')]) for tags in summary_tags_batch]
+
+                for item, item['text_num_nouns'], item['text_num_verbs'], item['summary_num_nouns'], item['summary_num_verbs'] in zip(batch, text_nouns_batch, text_verbs_batch, summary_nouns_batch, summary_verbs_batch):
+                   pass
+
                 flush_batch(batch, urljoin(args.base_url, '/solr/summaries/update/json/docs?commit=true'))
                 batch = []
+                batch_texts = []
+                batch_summaries = []
 
         flush_batch(batch, urljoin(args.base_url, '/solr/summaries/update/json/docs?commit=true'))
 
