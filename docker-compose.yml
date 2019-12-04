@@ -22,7 +22,7 @@ services:
     image: python:3.7
     volumes:
       - './scripts:/usr/scripts'
-    command: bash -c "pip install -r /usr/scripts/requirements.txt && python -m spacy download de_core_news_sm && python /usr/scripts/create_index.py --base_url=http://solr:8983"
+    command: bash -c "pip install -r /usr/scripts/requirements.txt && python -m spacy download de_core_news_sm && python /usr/scripts/index/create_index.py --base_url=http://solr:8983"
     depends_on:
       - solr
 
