@@ -1,10 +1,19 @@
-<mat-card *ngFor="let result of results">
-  <mat-card-header>
-    <mat-card-subtitle><span [innerHTML]="result.topic"></span></mat-card-subtitle>
-    <mat-card-title><span [innerHTML]="'...' + result.highlights + '...'"></span></mat-card-title>
-  </mat-card-header>
-  <mat-card-content><p [innerHTML]="result.summary"></p></mat-card-content>
-  <mat-card-actions>
+<div class="result-wrapper" #resultWrapper>
+  <mat-card *ngFor="let result of sortedResults">
+      <div class="tag" *ngFor="let topic of result.topic">{{topic}}</div>
+    <mat-card-header>
+      <mat-card-title><span [innerHTML]="result.highlights ? '...' + result.highlights + '...' : ''"></span>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content><p [innerHTML]="getSummary(result)"></p></mat-card-content>
 
-  </mat-card-actions>
-</mat-card>
+    <div class="card-footer">
+      <span><strong [innerHTML]="result.text_length"></strong><span [innerHTML]="'Zeichen'"></span></span>
+      <span><strong [innerHTML]="result.nNouns"></strong><span [innerHTML]="'Nomen'"></span></span>
+      <span><strong [innerHTML]="result.nVerbs"></strong><span [innerHTML]="'Verben'"></span></span>
+      <span><strong [innerHTML]="result.nDates"></strong><span [innerHTML]="'Datumsangaben'"></span></span>
+    </div>
+
+  </mat-card>
+  <div id="bottom" #bottom></div>
+</div>

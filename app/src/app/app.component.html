@@ -1,6 +1,10 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<header-component (queryInputChanged)="updateQuery($event)"></header-component>
-<filter (filterChanged)="updateQueryParams($event)"></filter>
-<results [results]="results"></results>
+<div class="wrapper" #wrapper>
+  <header>
+    <header-component (queryInputChanged)="updateQuery($event)"></header-component>
+    <filter (filterChanged)="updateQueryParams($event)"></filter>
+  </header>
+  <div class="num-results">{{nResults}} Resultate gefunden</div>
+  <results [results]="results" [nSummaryWords]="query.params.nSummaryWords" (bottomReached)="bottomReached()"></results>
 
-
+</div>

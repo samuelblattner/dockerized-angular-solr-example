@@ -9,7 +9,7 @@ from scripts.topic_model.utils import normalize_texts
 
 
 DATA_PATH = './summarizations.csv'
-N_DOCS = 10000
+N_DOCS = 200000
 N_TOPICS = 20
 
 
@@ -26,7 +26,7 @@ cv = CountVectorizer(
 nmf_model = NMF(
     n_components=N_TOPICS,
     solver='cd',
-    max_iter=500,
+    max_iter=1000,
     random_state=42,
     alpha=.1,
     l1_ratio=0.85

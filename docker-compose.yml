@@ -15,14 +15,14 @@ services:
         - './solr/conf:/tmp/cores/summaries/conf'
         - solr_cores_dev:/var/solr/data/
     image: solr:8.3.0
-    command: bash -c "mkdir -p /var/solr/data/summaries/conf && cp -R /tmp/cores/summaries/conf/* /var/solr/data/summaries/conf/ && cp -nR /opt/solr-8.3.0/server/solr/configsets/_default/conf /var/solr/data/summaries && solr start && tail -f /dev/null"
+    command: bash -c "mkdir -p /var/solr/data/summaries/conf && cp -R /tmp/cores/summaries/conf/* /var/solr/data/summaries/conf/ && cp -nR /opt/solr-8.3.0/server/solr/configsets/_default/conf /var/solr/data/summaries && solr start -f && tail -f /dev/null"
 
   python:
     container_name: 'Python-Scripts'
     image: python:3.7
     volumes:
       - './scripts:/usr/scripts'
-    command: bash -c "pip install -r /usr/scripts/requirements.txt && python -m spacy download de_core_news_sm && python /usr/scripts/index/create_index.py --base_url=http://solr:8983"
+    command: bash -c "python --version && python -m venv /usr/scripts/ && cd /usr/ && . /usr/scripts/bin/activate && pip install -r /usr/scripts/requirements.txt && python -m spacy download de_core_news_sm && python -m scripts --base_url=http://solr:8983"
     depends_on:
       - solr
 

@@ -1,34 +1,32 @@
-<mat-accordion>
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
-      <mat-panel-title>Filter</mat-panel-title>
-      <mat-panel-description>Some stuff</mat-panel-description>
-    </mat-expansion-panel-header>
+<mat-accordion class="custom-slider">
+  <form [formGroup]="filterForm">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Filter</mat-panel-title>
+      </mat-expansion-panel-header>
 
-    <form [formGroup]="filterForm">
-      <mat-select [formControlName]="'topic'">
-        <mat-option></mat-option>
+      <mat-select [formControlName]="'topic'" [placeholder]="'Thema wählen...'" [value]="'---'">
+        <mat-option *ngFor="let topic of topics" [value]="topic" [innerHTML]="topic"></mat-option>
       </mat-select>
-      <mat-form-field appearance="fill">
-        <input type="number" [formControlName]="'day'" matInput/>
-      </mat-form-field>
-      <mat-select [formControlName]="'month'">
 
-      </mat-select>
-      <mat-form-field appearance="fill">
-        <input type="number" [formControlName]="'year'" matInput/>
+      <mat-form-field>
+        <input matInput [formControlName]="'date'" [matDatepicker]="picker" placeholder="Datum wählen">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
 
-      <mat-slider [formControlName]="'nChars'"></mat-slider>
-    </form>
+      <ng5-slider id="slider" [(value)]="nCharsLow" [(highValue)]="nCharsHi" [options]="options"
+                  (valueChange)="emitValues()"></ng5-slider>
 
-  </mat-expansion-panel>
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
-      <mat-panel-title>Anzeige</mat-panel-title>
-      <mat-panel-description>Some stuff</mat-panel-description>
-    </mat-expansion-panel-header>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Anzeige</mat-panel-title>
+      </mat-expansion-panel-header>
 
+      <ng5-slider [(value)]="nSummaryWords" [options]="{floor:0, ceil:200}" (valueChange)="emitValues()"></ng5-slider>
 
-  </mat-expansion-panel>
+    </mat-expansion-panel>
+  </form>
 </mat-accordion>
+

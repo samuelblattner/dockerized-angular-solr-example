@@ -1,11 +1,19 @@
 version: '3.5'
+networks:
+    ir_iternal:
+      external: false
+
 services:
   angular:
     ports:
       - '80:8080'
     command: bash -c "echo 'daemon off;' >> /etc/nginx/nginx.conf && rm /etc/nginx/sites-enabled/default && ng build && cp /etc/nginx/sites-available/app.prod.conf /etc/nginx/sites-enabled/ && nginx"
+    networks:
+      - ir_iternal
   solr:
     volumes:
       - solr_cores_prod:/var/solr/data/
+    networks:
+      - ir_iternal
 volumes:
   solr_cores_prod:

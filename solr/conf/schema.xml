@@ -6,6 +6,7 @@
     <fieldType name="pint" class="solr.IntPointField" docValues="true"/>
     <fieldType name="plong" class="solr.LongPointField" docValues="true"/>
     <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true"/>
+    <fieldType name="date" class="solr.DatePointField" docValues="true"/>
     <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100" multiValued="true">
         <analyzer type="index">
             <tokenizer class="solr.StandardTokenizerFactory"/>
@@ -46,12 +47,9 @@
     <field name="text_num_nouns" type="pint"/>
     <field name="text_num_verbs" type="pint"/>
     <field name="text_num_dates" type="pint"/>
+    <field name="text_dates" type="date" multiValued="true"/>
 
     <field name="summary" type="text_general"/>
-    <field name="summary_length" type="pint"/>
-    <field name="summary_num_nouns" type="pint"/>
-    <field name="summary_num_verbs" type="pint"/>
-    <field name="summary_num_dates" type="pint"/>
 
     <dynamicField name="*_txt_rev" type="text_general_rev" indexed="true" stored="true"/>
 

@@ -2,3 +2,6 @@ progressbar2
 spacy
 gensim
 sklearn
+pandas
+nltk
+dateparser

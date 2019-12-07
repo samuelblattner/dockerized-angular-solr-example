@@ -1,0 +1,10 @@
+@import '../../theme';
+
+.mat-expansion-panel, mat-expansion-panel-header {
+  background-color: mat-color($my-theme-primary, lighter);
+
+  .mat-expansion-panel-header-title {
+    color: mat-color($my-theme-primary);
+    font-weight: bold;
+  }
+}

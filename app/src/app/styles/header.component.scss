@@ -1,12 +1,33 @@
-mat-form-field {
-  width: 100%;
-  font-size: 1rem;
+@import '../../theme';
 
-  .mat-form-field-outline {
-    overflow: hidden;
+:host {
+  text-align: center;
+}
 
+.mat-toolbar-row {
+  position: relative;
+  padding: 1rem;
+  height: auto;
+  white-space: normal;
+
+  h1 {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    font-size: 1.6rem;
   }
 
   input {
+    text-align: left;
+    background-color: white;
+    color: mat-color($my-theme-primary);
+    padding: 0.5rem;
+  }
+
+  mat-icon {
+    position: absolute;
+    right: 2rem;
+    color: mat-color($my-theme-primary);
   }
 }
+

@@ -11,10 +11,13 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HeaderComponent } from "./components/header.component";
-import { ResultComponent } from "./components/result.component";
 import { FilterComponent } from "./components/filter.component";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { ResultsComponent } from "./components/results.component";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatNativeDateModule } from "@angular/material/core";
+import { Ng5SliderModule } from "ng5-slider";
+import { MatChipsModule } from "@angular/material/chips";
 
 
 @NgModule({
@@ -22,8 +25,7 @@ import { ResultsComponent } from "./components/results.component";
     AppComponent,
     HeaderComponent,
     FilterComponent,
-    ResultsComponent,
-    ResultComponent
+    ResultsComponent
   ],
   imports: [
     BrowserModule,
@@ -37,10 +39,15 @@ import { ResultsComponent } from "./components/results.component";
     MatCardModule,
     MatIconModule,
     BrowserAnimationsModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    Ng5SliderModule,
+    MatChipsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule {
 }
+

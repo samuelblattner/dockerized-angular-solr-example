@@ -3,6 +3,8 @@ from typing import List
 
 import nltk
 
+nltk.download('stopwords')
+
 tokenizer = nltk.tokenize.RegexpTokenizer(r'\s', gaps=True)
 stemmer = nltk.stem.SnowballStemmer('german', True)
 stop_words = nltk.corpus.stopwords.words('german') + [

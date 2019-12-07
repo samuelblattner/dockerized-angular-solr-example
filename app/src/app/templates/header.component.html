@@ -1,15 +1,11 @@
-<header>
-  <mat-toolbar color="primary">
-    <mat-toolbar-row>
-      <h1>Die Bunte Welt der Zusammenfassungen</h1>
-    </mat-toolbar-row>
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <h1>Die Bunte Welt der Zusammenfassungen</h1>
+  </mat-toolbar-row>
 
-    <mat-toolbar-row>
-      <mat-form-field appearance="outline">
-        <input type="text" [formControl]="queryInput" [placeholder]="'Search Query'" matInput/>
-        <mat-icon matSuffix>search</mat-icon>
-      </mat-form-field>
+  <mat-toolbar-row>
+      <input type="text" [formControl]="queryInput" [placeholder]="'Suche'" matInput/>
+      <mat-icon matSuffix>search</mat-icon>
+  </mat-toolbar-row>
+</mat-toolbar>
 
-    </mat-toolbar-row>
-  </mat-toolbar>
-</header>

@@ -11,7 +11,12 @@ import hashlib
 import json
 import progressbar
 import spacy
+import dateparser
 
+from scripts.common import download_summarization_file_if_not_exists
+from .topic_model.infer_topic_model import predict_topic
+
+DATA_PATH = '/tmp/data_train.csv'
 
 bar = progressbar.ProgressBar()
 last_count = 0
@@ -63,7 +68,7 @@ if __name__ == '__main__':
         except HTTPError as e:
             sys.stdout.write('Index already exists, will exit...\n')
             retry = False
-            exit(0)
+            # exit(0)
         except (RemoteDisconnected, URLError):
             sys.stdout.write('Solr container not yet available, retrying in 5 seconds...\n')
             sleep(5)
@@ -79,11 +84,9 @@ if __name__ == '__main__':
     bar.widgets = [
         'Download progress: ', progressbar.Bar(), ' ', progressbar.Counter()
     ]
-    download_csv = request.urlretrieve(
-        url='https://drive.switch.ch/index.php/s/YoyW9S8yml7wVhN/download?path=%2F&files=data_train.csv',
-        filename='/tmp/data_train.csv',
-        reporthook=download_progress
-    )
+
+    download_summarization_file_if_not_exists(DATA_PATH)
+
     sys.stdout.write('done.\n')
 
     # Load data into index
@@ -103,7 +106,7 @@ if __name__ == '__main__':
         batch = []
         batch_texts = []
         batch_summaries = []
-        date_regex = r'(\d{1,2}\.(\d{1,2}\.|\s\w{1,14}\s)\d{4})'
+        date_regex = r'(\d{1,2}\.\s?(\d{1,2}\.\s?|\s?(Januar|Februar|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember))(\s?\d{4}))'
 
         for r, row in enumerate(reader):
 
@@ -112,17 +115,19 @@ if __name__ == '__main__':
             summary = row.get('summary')
             batch_summaries.append(summary)
 
+            parsed_dates = [dateparser.parse(d[0]) for d in re.findall(date_regex, text)]
+
             batch.append(
                 {
                     'id': hashlib.md5('{}{}'.format(text, summary).encode('utf-8')).hexdigest(),
 
+                    'topic': predict_topic(text, top_n=2),
                     'text': text,
                     'text_length': len(text.split(' ')),
-                    'text_num_dates': len(re.findall(date_regex, text)),
+                    'text_num_dates': len(parsed_dates),
+                    'text_dates': [d.strftime('%Y-%m-%d') for d in parsed_dates],
 
                     'summary': summary,
-                    'summary_length': len(summary.split(' ')),
-                    'summary_num_dates': len(re.findall(date_regex, summary)),
                 }
             )
 
@@ -136,7 +141,7 @@ if __name__ == '__main__':
                 summary_nouns_batch = [sum([1 for tag in tags if tag.pos_ == 'NOUN']) for tags in summary_tags_batch]
                 summary_verbs_batch = [sum([1 for tag in tags if tag.pos_ in ('VERB', 'AUX')]) for tags in summary_tags_batch]
 
-                for item, item['text_num_nouns'], item['text_num_verbs'], item['summary_num_nouns'], item['summary_num_verbs'] in zip(batch, text_nouns_batch, text_verbs_batch, summary_nouns_batch, summary_verbs_batch):
+                for item, item['text_num_nouns'], item['text_num_verbs'] in zip(batch, text_nouns_batch, text_verbs_batch):
                    pass
 
                 flush_batch(batch, urljoin(args.base_url, '/solr/summaries/update/json/docs?commit=true'))

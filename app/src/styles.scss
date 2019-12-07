@@ -1,16 +1,52 @@
 /* You can add global styles to this file, and also import other style files */
 @import '../node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css';
-
-
 @import './theme';
+
+
+// Officina
+// --------
+@font-face {
+  font-family: officina;
+  font-weight: normal;
+  src: url(assets/fonts/OfficinaSansITCPro-Book.otf);
+}
+@font-face {
+  font-family: officina;
+  font-weight: bold;
+  src: url(assets/fonts/OfficinaSansITCPro-Bold.otf);
+}
+
 
 html, body {
   width: 100%;
   height: 100%;
   padding: 0;
   margin: 0;
+
+  font-family: officina, serif;
 }
 
 em {
   color: mat-color($my-theme-primary);
+  font-weight: bold;
+  font-style: normal;
+}
+
+.custom-slider .ng5-slider .ng5-slider-pointer:after {
+  width: 8px;
+  height: 8px;
+  top: 4px;
+  left: 4px;
+}
+
+.custom-slider .ng5-slider .ng5-slider-pointer {
+  width: 16px;
+  height: 16px;
+  left: 4px;
+  top: -6px;
+  background-color: mat-color($my-theme-primary);
+}
+
+.custom-slider .ng5-slider .ng5-slider-selection {
+  background-color: mat-color($my-theme-primary);
 }

@@ -15,6 +15,8 @@ Contents:
    content/2-architecture
    content/3-data_data_flow
    content/4-solr_index_schema
+   content/5-ui_and_demo
+   content/6-appendix
 
 Indices and tables
 ==================

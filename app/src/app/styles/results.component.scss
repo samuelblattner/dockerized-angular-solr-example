@@ -1,0 +1,50 @@
+@import '../../theme';
+
+:host {
+  margin-top: 0.2rem;
+}
+
+.result-wrapper {
+  height: 100%;
+  overflow: auto;
+  padding: 0.5rem;
+}
+
+mat-card, .mat-card {
+  margin-bottom: 1rem;
+  background-color: mat-color($my-theme-primary, lighter);
+  color: mat-color($my-theme-primary);
+  padding: 2rem;
+}
+
+.card-footer {
+  display: inline-block;
+}
+.card-footer > span {
+  margin-right: 1rem;
+  float: left;
+}
+
+strong {
+  margin-right: 0.3rem;
+}
+
+.tag {
+  padding: 0.9rem;
+  background-color: mat-color($my-theme-primary);;
+  color: white;
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin: 0;
+
+  margin-right:0.5rem;
+  border-radius: 50px;
+  display: inline-block;
+  line-height: 0;
+}
+
+#bottom {
+  margin-bottom: 2rem;
+}
+
+
