@@ -53,18 +53,21 @@ topic_key_term_idxs = np.argsort(-np.absolute(topic_terms), axis=1)[:, :20]
 topic_keyterms = vocab[topic_key_term_idxs]
 topics = [', '.join(topic) for topic in topic_keyterms]
 pd.set_option('display.max_colwidth', -1)
-topics_df = pd.DataFrame(topics, columns=['Terms per Topic'], index=['Topic' + str(t) for t in range(1, 20 + 1)])
+topics_df = pd.DataFrame(topics, columns=['Terms per Topic'], index=['Topic' + str(t) for t in range(1, N_TOPICS + 1)])
 
 topics_df.to_csv('./model/topics.csv')
 
+pandas.options.display.float_format = '{:,.3f}'.format
+dt_df = pandas.DataFrame(doc_topics, columns=['T' + str(i) for i in range(1, N_TOPICS + 1)])
 pandas.options.display.float_format = '{:,.5f}'.format
 pandas.set_option('display.max_colwidth', 200)
 
-max_score_topics = topics_df.max(axis=0)
+max_score_topics = dt_df.max(axis=0)
 dominant_topics = max_score_topics.index
 term_score = max_score_topics.values
-document_numbers = [topics_df[topics_df[t] == max_score_topics.loc[t]].index[0] for t in dominant_topics]
+document_numbers = [dt_df[dt_df[t] == max_score_topics.loc[t]].index[0] for t in dominant_topics]
 all_texts = [summary for text, summary in get_summarization_iter(DATA_PATH, limit=N_DOCS)]
+
 documents = [all_texts[i] for i in document_numbers]
 result_df = pandas.DataFrame({
     'Dominant Topic': dominant_topics,

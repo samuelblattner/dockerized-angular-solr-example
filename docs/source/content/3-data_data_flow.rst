@@ -104,3 +104,13 @@ Das unsupervised learning gruppiert Wörter für 20 Themen wie folgt:
 Einige der erzeugten Themen sind anhand der Wörter nicht eindeutig erkennbar.
 Um eine bessere Vorstellung davon zu erhalten, welches Thema auf die einzelnen Wort-Cluster zutrifft, soll für jeden Cluster das jeweils am Besten passende Dokument berechnet werden (höchste Score).
 
+Ein Wortvektor des Vokabulars besteht aus ??? Komponenten und macht das Modell unnötig komplex.
+Der ```CountVectorizer``` wird so angepasst, dass nur Wörter mit einer minimalen Document Frequency von 200 in das Vokabular aufgenommen werden.
+Gleichzeitig wird die maximale Document Frequency gesenkt von 0.6 auf 0.1.
+Bei einem Corpus von 100'000 Dokumenten entspricht dies einem Minimalen Vorkommen eines Wortes in 0.2% sowie einem maximalen Vorkommen von 10%.
+Damit sollte die Qualität bzw. die Aussagekraft der einzelnen Wörter verbessert werden.
+
+Ein Erneutes Training erzeugt Wortvektoren mit noch ??? Komponenten.
+
+
+
