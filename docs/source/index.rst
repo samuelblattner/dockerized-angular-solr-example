@@ -11,7 +11,6 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   content/1-requirements
    content/2-architecture
    content/3-data_data_flow
    content/4-solr_index_schema

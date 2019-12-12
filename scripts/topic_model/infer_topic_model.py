@@ -26,7 +26,7 @@ TOPICS = (
     'Kirchen',
     'Politik',
     'Hockey',
-    'Krieg',
+    'Definitionen',
     'Deutschland',
 )
 
