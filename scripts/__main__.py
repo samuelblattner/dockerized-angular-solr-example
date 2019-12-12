@@ -12,7 +12,7 @@ import re
 import spacy
 import sys
 
-from scripts.common import download_summarization_file_if_not_exists, bar
+from scripts.common import download_summarization_file_if_not_exists, bar, flush_batch
 from scripts.topic_model.infer_topic_model import predict_topic
 
 
@@ -40,6 +40,7 @@ if __name__ == '__main__':
     # CLI parser to read base url. Base url of solr backend should be provided here
     parser = ArgumentParser()
     parser.add_argument('--base_url', required=True)
+    parser.add_argument('--max_docs', required=False, default=1000)
     args = parser.parse_args()
 
     # Load Spacy NLP tool to perform POS-Tagging later on...
@@ -105,6 +106,9 @@ if __name__ == '__main__':
         batch_summaries = []
 
         for r, row in enumerate(reader):
+
+            if r >= args.max_docs:
+                break
 
             text = row.get('source')
             batch_texts.append(text)

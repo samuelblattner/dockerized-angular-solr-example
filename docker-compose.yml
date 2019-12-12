@@ -22,7 +22,7 @@ services:
     image: python:3.7
     volumes:
       - './scripts:/usr/scripts'
-    command: bash -c "python --version && python -m venv /usr/scripts/ && cd /usr/ && . /usr/scripts/bin/activate && pip install -r /usr/scripts/requirements.txt && python -m spacy download de_core_news_sm && python -m scripts --base_url=http://solr:8983"
+    command: bash -c "python --version && python -m venv /usr/scripts/ && cd /usr/ && . /usr/scripts/bin/activate && pip install -r /usr/scripts/requirements.txt && python -m spacy download de_core_news_sm && python -m scripts --base_url=http://solr:8983 --max_docs=1000"
     depends_on:
       - solr
 
