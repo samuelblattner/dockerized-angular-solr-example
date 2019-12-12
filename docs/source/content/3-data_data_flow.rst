@@ -101,4 +101,6 @@ Das unsupervised learning gruppiert Wörter für 20 Themen wie folgt:
     :header-rows: 1
     :encoding: utf-8
 
-Viele der Themen sind nicht eindeutig
+Einige der erzeugten Themen sind anhand der Wörter nicht eindeutig erkennbar.
+Um eine bessere Vorstellung davon zu erhalten, welches Thema auf die einzelnen Wort-Cluster zutrifft, soll für jeden Cluster das jeweils am Besten passende Dokument berechnet werden (höchste Score).
+

@@ -1,4 +1,5 @@
 import numpy as np
+import pandas
 import pandas as pd
 import pickle
 
@@ -26,7 +27,7 @@ cv = CountVectorizer(
 nmf_model = NMF(
     n_components=N_TOPICS,
     solver='cd',
-    max_iter=1000,
+    max_iter=2,
     random_state=42,
     alpha=.1,
     l1_ratio=0.85
@@ -55,3 +56,22 @@ pd.set_option('display.max_colwidth', -1)
 topics_df = pd.DataFrame(topics, columns=['Terms per Topic'], index=['Topic' + str(t) for t in range(1, 20 + 1)])
 
 topics_df.to_csv('./model/topics.csv')
+
+pandas.options.display.float_format = '{:,.5f}'.format
+pandas.set_option('display.max_colwidth', 200)
+
+max_score_topics = topics_df.max(axis=0)
+dominant_topics = max_score_topics.index
+term_score = max_score_topics.values
+document_numbers = [topics_df[topics_df[t] == max_score_topics.loc[t]].index[0] for t in dominant_topics]
+all_texts = [summary for text, summary in get_summarization_iter(DATA_PATH, limit=N_DOCS)]
+documents = [all_texts[i] for i in document_numbers]
+result_df = pandas.DataFrame({
+    'Dominant Topic': dominant_topics,
+    'Max Score': term_score,
+    'Text Idx': document_numbers,
+    'Topic': topics_df['Terms per Topic'],
+    'Summary': documents
+})
+
+result_df.to_csv('./model/best_fits.csv')
