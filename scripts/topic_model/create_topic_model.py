@@ -17,8 +17,8 @@ N_TOPICS = 20
 download_summarization_file_if_not_exists(DATA_PATH)
 
 cv = CountVectorizer(
-    min_df=20,
-    max_df=0.6,
+    min_df=200,
+    max_df=0.2,
     ngram_range=(1, 2),
     token_pattern=None,
     tokenizer=lambda doc: doc,
@@ -27,7 +27,7 @@ cv = CountVectorizer(
 nmf_model = NMF(
     n_components=N_TOPICS,
     solver='cd',
-    max_iter=2,
+    max_iter=1000,
     random_state=42,
     alpha=.1,
     l1_ratio=0.85
