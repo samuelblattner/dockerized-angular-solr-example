@@ -14,13 +14,9 @@ Der Datensatz hat entsprechend eine sehr einfache Struktur:
 Wie vorgängig erwähnt, sollen das Preprocessing, also die Normalisierung und das Feature Engineering und schliesslich die Indexierung der Dokumente automatisch und reproduzierbar ablaufen.
 Folgende Grafik gibt einen Überblick über den Datenfluss:
 
-.. figure:: ../images/data.png
+.. image:: ../images/data.png
 
-    Datenfluss von Rohdokument bis Index.
-    Neben den bereits vorhandenen Feldern *source* und *summary* werden weitere Felder über Feature-Engineering indexiert.
-
-
-Nebst den im Datensatz vorhandenen Feldern *source* sowie *summary* (Volltext und Zusammenfassung), werden diverese weitere Felder
+Nebst den im Datensatz vorhandenen Feldern *source* sowie *summary* (Volltext und Zusammenfassung), werden diverse weitere Felder
 via Feature-Engineering indexiert, um den Anforderungen des Auftraggebers zu genügen. Die Einzelnen Prozesse sind nachfolgend
 im Detail beschrieben.
 
@@ -104,10 +100,10 @@ Das «unsupervised learning» gruppiert Wörter für 20 Themen bereits in brauch
 Die aus einem Code-Beispiel entnommenen Parameter *min_df* (minimale Dokumentfrequenz) sowie *max_df* für den *CountVectorizer* sind
 für den vorliegenden Datensatz allerdings nicht passend bzw. bewirken die Selektion von zu vielen Wörtern, die in das Vokabular einbezogen werden.
 Ein Vektor des Vokabulars besteht aus 177'468 Komponenten und macht das Modell unnötig komplex.
-Der *CountVectorizer* wird deshalb so angepasst, dass nur Wörter mit einer minimalen Documentfrequenz von 200 in das Vokabular aufgenommen werden.
-Gleichzeitig wird die maximale Documentfrequenz gesenkt von 0.6 auf 0.2.
+Der *CountVectorizer* wird deshalb so angepasst, dass nur Wörter mit einer minimalen Dokumentfrequenz von 200 in das Vokabular aufgenommen werden.
+Gleichzeitig wird die maximale Dokumentfrequenz gesenkt von 0.6 auf 0.2.
 Bei einem Korpus von 100'000 Dokumenten entspricht dies einem minimalen Vorkommen eines Wortes in 0.2% sowie einem maximalen Vorkommen von 20% aller Dokumente.
-Damit sollte die Qualität bzw. die Aussagekraft der einzelnen Wörter verbessert werden.
+Damit sollten die Qualität bzw. die Aussagekraft der einzelnen Wörter verbessert werden.
 Ein Erneutes Training des Vokabulars erzeugt Wortvektoren mit noch 16'464 Komponenten.
 Die folgende Tabelle zeigt die erzeugten Wort-Cluster gemäss den erwähnten Parametereinstellungen:
 

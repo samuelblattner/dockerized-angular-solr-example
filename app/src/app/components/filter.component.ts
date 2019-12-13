@@ -25,7 +25,7 @@ export class FilterComponent implements OnInit {
         case LabelType.High:
           return '<b>Max Zeichen:</b> ' + value;
         default:
-          return '$' + value;
+          return value.toString();
       }
     }
   };

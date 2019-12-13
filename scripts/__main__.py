@@ -127,7 +127,7 @@ if __name__ == '__main__':
                     'text': text,
                     'text_length': len(text.split(' ')),
                     'text_num_dates': len(parsed_dates),
-                    'text_dates': [d.strftime('%Y-%m-%d') for d in parsed_dates],
+                    'text_dates': [d.strftime('%Y-%m-%d') for d in parsed_dates if d],
 
                     'summary': summary,
                 }

@@ -13,13 +13,13 @@ Die Texte sind aus unterschiedlichen Themengebieten zusammengetragen.
 
 Der zuvor beschriebene Auftrag stellt Rahmenbedingungen, die vom Datensatz wie folgt erfüllt werden:
 
-1. Der Datensatz soll aus mindestens 5000 Dokumenten bestehen: **OK** (enthält 100'000 Texte und deren Referenzzusammenfassungen, zudem 2'000 Dokumente zun Testen)
+1. Der Datensatz soll aus mindestens 5'000 Dokumenten bestehen: **OK** (enthält 100'000 Texte und deren Referenzzusammenfassungen, zudem 2'000 Dokumente zun Testen)
 2. Der Datensatz soll möglichst mehrsprachig sein: **NEIN** (Datensatz besteht ausschliesslich aus deutschsprachigen Dokumenten)
 3. Der Datensatz soll möglichst nicht (nur) aus englischsprachigen Dokumenten bestehen: **OK** (siehe vorheriger Punkt)
 4. Ein Dokument soll mehrere Felder beinhalten: **OK** (Ein Dokument besteht aus Text und Zusammenfassung)
 5. Jedes Dokument soll mindestens ein Fulltext-Feld mit durchschnittlich mindestens 5-10 Sätzen enthalten: **OK** (Durchschnittlich 37 Sätze im Text, laut python script)
 
-Bis auf Rahmenbedingung 2 erfüllt der Datensatz alle übrigen Bedinungen.
+Bis auf Rahmenbedingung 2 erfüllt der Datensatz alle übrigen Bedingungen.
 
 Anforderungen
 -------------
@@ -31,7 +31,7 @@ Die Anforderungen an die Lösung hat der Auftraggeber wie folgt definiert:
 4. «Ich kann Texte nach ihrer Zeichenlänge filtern. Bei der Längenberechnung sollen Stoppwörter mitgezählt werden.»
 5. «Für jeden Text soll die Anzahl Nomen, Verben und wenn möglich Datumsangaben berechnet und angegeben werden.»
 6. «Ich möchte die Texte auf Personen-Namen durchsuchen können»
-7. «Ich möchte die Texte anhand allfällig in den Texten vorhandenen Daten (Datum) einteilen und suchen können (z. B. alle Texte welche etwas mit dem Jahr 2000 zu tun haben auflisten)»
+7. «Ich möchte die Texte anhand allfällig in den Texten vorhandenen Daten (Datum) einteilen und suchen können (z. B. alle Texte, welche etwas mit dem Jahr 2000 zu tun haben, auflisten)»
 8. «Ich möchte die Texte basierend auf dem im Text behandelten Thema durchsuchen können»
 
 Die Anforderungen werden bis auf zwei Fälle als umsetzbar erachtet.
@@ -40,7 +40,7 @@ Mit einem Modell für extrahierende oder abstrahierende Zusammenfassungen könnt
 Sie aber auf eine vordefinierte Anzahl Wörter zu kürzen ist nur mit der abstrahierenden Methode möglich.
 Da das Erstellen eines solchen Modells den zeitlichen Rahmen der Arbeit bei Weitem überschreiten würde, wird darauf verzichtet.
 
-Des Weiteren müsste für die Anforderung Nr. 6 ein Parser für Namen erstellt werden, was ebenfalls ein umfangreiches Unterfangen darstellt.
+Des weiteren müsste für die Anforderung Nr. 6 ein Parser für Namen erstellt werden, was ebenfalls ein umfangreiches Unterfangen darstellt.
 Stattdessen wird die Anforderung so umgesetzt, dass über die Volltextsuche nach Personen gesucht werden kann.
 
 Architektur
@@ -52,11 +52,7 @@ Kommando *docker-compose up* zu replizieren.
 
 Per ``docker-compose up`` werden drei Container wie folgt erzeugt:
 
-.. figure:: ../images/containers.png
-    :align: center
-
-    Docker Compose Architektur
-
+.. image:: ../images/containers.png
 
 Der Container *Angular-Frontend* enthält einerseits einen NginX-Server und andererseits den Source-Code für das Angular-GUI.
 Das GUI ist im Entwicklungsmodus über den Port :8080 und im Produktionsmodus über den HTTP-Port :80 abrufbar.
