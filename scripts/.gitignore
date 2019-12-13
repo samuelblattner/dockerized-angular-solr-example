@@ -1,1 +1,6 @@
 summarizations.csv
+lib/
+lib64
+include/
+bin/
+pyvenv.cfg

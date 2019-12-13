@@ -11,7 +11,7 @@ all texts in a Solr core.
 
 Before you run the application, make sure you have [Docker Compose](https://docs.docker.com/compose/) installed on your computer. 
 Then, to run the application, simply type from within the project's directory:
-
+    
     $ docker-compose up
     
 Note: Since indexing all 100k documents would take a considerable amount of time (due to various preprocessing such as POS-Tagging, etc.) only 1'000 documents

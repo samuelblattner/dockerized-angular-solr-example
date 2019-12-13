@@ -1,19 +1,18 @@
 Daten und Feature-Engineering
 =============================
-Der Index wird mit Daten der «German Text Summarization Challenge 2019» aufgebaut (siehe: https://www.swisstext.org/swisstext.org/2019/shared-task/german-text-summarization-challenge.html).
+Der Index wird wie eingangs beschrieben mit Daten der «German Text Summarization Challenge 2019» aufgebaut.
 Der Datensatz umfasst 100'000 Texteinträge mit jeweils zugehöriger, manuell redigierter Zusammenfassung.
 Der Datensatz hat entsprechend eine sehr einfache Struktur:
 
-.. csv-table:: data_train.csv
+.. csv-table:: Struktur der CSV-Datei des Datensatzes
     :file: ../tables/train.csv
     :widths: 70,30
     :header-rows: 1
     :encoding: utf-8
 
 
-Wie vorgängig erwähnt, soll das Preprocessing, also die Normalisierung, das Feature Engineering und die Indexierung
-der Dokumente automatisch und reproduzierbar ablaufen.
-Zu diesem Zweck soll folgende Grafik einen Überblick über das Preprocessing bzw. den Datenfluss geben:
+Wie vorgängig erwähnt, sollen das Preprocessing, also die Normalisierung und das Feature Engineering und schliesslich die Indexierung der Dokumente automatisch und reproduzierbar ablaufen.
+Folgende Grafik gibt einen Überblick über den Datenfluss:
 
 .. figure:: ../images/data.png
 
@@ -27,13 +26,14 @@ im Detail beschrieben.
 
 Einstieg in den automatischen Ablauf bildet das Modul *scripts/__main__.py*.
 
+.. _scripts/__main__.py: https://github.com/samuelblattner/dockerized-angular-solr-example/blob/master/scripts/__main__.py
 
 
 Datumsangaben
 -------------
-Die Daten enthalten ausschliesslich Texte in deutscher Sprache.
-Damit können Datumsangaben in einfacher Weise gefunden werden.
-Um die Formate *dd.mm.yyyy* sowie *dd.M.yyyy* in den Texten zu finden wird folgende Regular Expression verwendet:
+Der Datensatz besteht ausschliesslich aus Texten in deutscher Sprache.
+Daher können Datumsangaben in einfacher Weise gefunden werden.
+Um die Formate *dd.mm.yyyy* sowie *dd.M.yyyy* in den Texten zu finden, wird folgende Regular Expression verwendet:
 
 .. code-block::
 
@@ -41,76 +41,104 @@ Um die Formate *dd.mm.yyyy* sowie *dd.M.yyyy* in den Texten zu finden wird folge
     August|September|Oktober|November|Dezember))(\s?\d{4}))
 
 Davon wird einerseits die Anzahl pro Text im Feld *text_num_dates* und andererseits die effektiven Daten im Feld *text_dates* indexiert.
-Für das Parsen von Daten in Textformat wird die Bibliothek «dateparser» verwendet.
+Für das Parsen von Daten in Textformat wird die Bibliothek dateparser_ verwendet.
+Das Datum wird im Format *yyy-mm-dd* an solr übergeben.
+
+.. _dateparser: https://pypi.org/project/dateparser/
 
 
 Part-Of-Speech Tagging
 ----------------------
-Mit der NLP-Bibliothek «Spacy» können Texte mit wenig Aufwand analysiert werden.
-U.a. steht auch die Funktion «Part-Of-Speach» Taggin zur Verfügung, wo die Wörter der Texte mit ihren jeweiligen Wortarten annotiert werden:
+Die NLP-Bibliothek Spacy_ analysiert Textdaten mit wenig Aufwand.
+Unter vielen anderen steht die Funktion «Part-Of-Speach» Tagging («POS-Tagging») zur Verfügung, mit der die Wortarten von Texten annotiert werden:
 
 .. literalinclude:: ../../../scripts/__main__.py
+    :language: python
     :lines: 136
     :linenos:
 
-Zur schnelleren Verarbeitung werden die Texte batch-weise Spacy übergeben.
+Zur schnelleren Verarbeitung werden die Texte stapelweiseweise an Spacy (nlp-Objekt) übergeben.
 Ausserdem werden die Bestandteile *parser* (Abhängigkeiten von Satzteilen), *ner* (Named Entity Recognition, erkennen von referenzierten Objekten, z.B. Orte, Menschen, etc.) sowie
 *textcat* (Textkategorisierung) ausgeschaltet, um den Prozessor von nicht benötigten Berechnungen zu entlasten.
 Für die Textkategorisierung wird ein eigenes Modell trainiert (siehe weiter unten).
+
+Mit der vorgängig beschriebenen Extraktion von Datumsangaben sowie mit POS-Tagging wird Anforderung Nr. 5 entsprochen.
+
+.. _Spacy: https://spacy.io/
 
 
 Topic Modeling
 --------------
 Der Datensatz enthält Texte aus verschiedenen Sachgebieten.
-Die Themen sind jedoch nicht im Datensatz vorhanden und müssen erzeugt werden.
-Dafür wird ein «Topic Model» auf Basis der Non-negative Matrix Factorization Methode trainiert.
+Die Themen sind jedoch nicht im Datensatz enthalten und müssen erzeugt werden.
+Dafür wird ein «Topic Model» auf Basis der Non-negative-Matrix-Factorization-Methode (NMF) trainiert.
 
-.. code-block:: python
+Die Texte werden zunächst normalisiert:
 
-    cv = CountVectorizer(
-        min_df=20,
-        max_df=0.6,
-        ngram_range=(1, 2),
-        token_pattern=None,
-        tokenizer=lambda doc: doc,
-        preprocessor=lambda doc: doc
-    )
+.. literalinclude:: ../../../scripts/topic_model/utils.py
+    :language: python
+    :lines: 27-39
+    :linenos:
 
-    nmf_model = NMF(
-        n_components=N_TOPICS,
-        solver='cd',
-        max_iter=1000,
-        random_state=42,
-        alpha=.1,
-        l1_ratio=0.85
-    )
+Bei diesem Prozessschritt wird ein Text jeweils nach Leerzeichen getrennt und in einzelne Wörter zerlegt (Zeile 5).
+Anschliessend werden die Wörter zur Reduktion der Dimensionalität bzw. der Komplexität des Datenmodells mit einem SnowballStemmer auf ihre Stämme reduziert (Zeile 7).
+Schliesslich werden alle Wörter entfernt, die aus nur einem Zeichen bestehen.
 
-    cv_features = cv.fit_transform(
-    map(lambda text: normalize_texts(list(text))[0], filter(
-        lambda row: row[0], get_summarization_iter(DATA_PATH, limit=N_DOCS)
-    )))
+Im nächsten Prozessschritt werden die Dokumente vektorisiert.
+Der *CountVectorizer* baut einerseits aus den in den Texten enthaltenen Wörtern ein Vektoren-Vokabular auf und verwendet dieses wiederum
+bei der Umwandlung der Dokumente:
 
-    doc_topics = nmf_model.fit_transform(cv_features)
+.. literalinclude:: ../../../scripts/topic_model/create_topic_model.py
+    :language: python
+    :lines: 19-33
+    :linenos:
 
+Mit diesem Vokabular bzw. den vektorisieren Dokumenten wird schliesslich das Modell trainiert:
 
-Das unsupervised learning gruppiert Wörter für 20 Themen wie folgt:
+.. literalinclude:: ../../../scripts/topic_model/create_topic_model.py
+    :language: python
+    :lines: 35-44
+    :linenos:
+
+Das «unsupervised learning» gruppiert Wörter für 20 Themen bereits in brauchbarer Weise.
+Die aus einem Code-Beispiel entnommenen Parameter *min_df* (minimale Dokumentfrequenz) sowie *max_df* für den *CountVectorizer* sind
+für den vorliegenden Datensatz allerdings nicht passend bzw. bewirken die Selektion von zu vielen Wörtern, die in das Vokabular einbezogen werden.
+Ein Vektor des Vokabulars besteht aus 177'468 Komponenten und macht das Modell unnötig komplex.
+Der *CountVectorizer* wird deshalb so angepasst, dass nur Wörter mit einer minimalen Documentfrequenz von 200 in das Vokabular aufgenommen werden.
+Gleichzeitig wird die maximale Documentfrequenz gesenkt von 0.6 auf 0.2.
+Bei einem Korpus von 100'000 Dokumenten entspricht dies einem minimalen Vorkommen eines Wortes in 0.2% sowie einem maximalen Vorkommen von 20% aller Dokumente.
+Damit sollte die Qualität bzw. die Aussagekraft der einzelnen Wörter verbessert werden.
+Ein Erneutes Training des Vokabulars erzeugt Wortvektoren mit noch 16'464 Komponenten.
+Die folgende Tabelle zeigt die erzeugten Wort-Cluster gemäss den erwähnten Parametereinstellungen:
 
 .. csv-table:: Topics
-    :file: ../tables/topics.csv
-    :widths: 10,20,70
+    :file: ../tables/topics1.csv
+    :widths: 4,48,48
     :header-rows: 1
     :encoding: utf-8
+    :class: longtable
 
-Einige der erzeugten Themen sind anhand der Wörter nicht eindeutig erkennbar.
-Um eine bessere Vorstellung davon zu erhalten, welches Thema auf die einzelnen Wort-Cluster zutrifft, soll für jeden Cluster das jeweils am Besten passende Dokument berechnet werden (höchste Score).
+Zwar sind die Wort-Cluster in den beiden Parametereinstellungen relativ ähnlich.
+Allerdings kristallisiert sich bei bestimmten Themen wie z.B. Nr. 9 eine deutlich bessere Auswahl heraus.
+Möglicherweise liesse sich diese zur Anpassen der Parameter sogar noch weiter verbessern.
+Undeutliche Cluster wie z.B. Nr. 19 fallen hingegen weg.
 
-Ein Wortvektor des Vokabulars besteht aus ??? Komponenten und macht das Modell unnötig komplex.
-Der ```CountVectorizer``` wird so angepasst, dass nur Wörter mit einer minimalen Document Frequency von 200 in das Vokabular aufgenommen werden.
-Gleichzeitig wird die maximale Document Frequency gesenkt von 0.6 auf 0.1.
-Bei einem Corpus von 100'000 Dokumenten entspricht dies einem Minimalen Vorkommen eines Wortes in 0.2% sowie einem maximalen Vorkommen von 10%.
-Damit sollte die Qualität bzw. die Aussagekraft der einzelnen Wörter verbessert werden.
+Um einen weiteren Anhaltspunkt zur Benennung der Themen zu erzeugen, wird für jeden Cluster jeweils dasjenige Dokument gesucht,
+bei dem das entsprechende Thema dominiert und bei dem das Dokument die höchste Score erreicht.
+Gleichzeitig wird manuell jeweils ein Themavorschlag hinzugefügt:
 
-Ein Erneutes Training erzeugt Wortvektoren mit noch ??? Komponenten.
+.. csv-table:: Topics
+    :file: ../tables/best_fits.csv
+    :widths: 5,20,30,45
+    :class: longtable
+    :header-rows: 1
+    :encoding: utf-8
+    :align: left
 
+Das so trainierte Modell kann nun dazu verwendet werden, für beliebige Texte ein dominirendes Thema zu prognostizieren:
 
+.. literalinclude:: ../../../scripts/topic_model/infer_topic_model.py
+    :language: python
+    :lines: 50-57
+    :linenos:
 

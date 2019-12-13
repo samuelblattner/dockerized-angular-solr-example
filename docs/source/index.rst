@@ -11,16 +11,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   content/2-architecture
+   content/2-assignment-solution
    content/3-data_data_flow
    content/4-solr_index_schema
    content/5-ui_and_demo
-   content/6-appendix
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-

@@ -8,37 +8,37 @@ from sklearn.feature_extraction.text import CountVectorizer
 from scripts.topic_model.utils import normalize_texts
 
 TOPICS = (
-    'Wissenschaft & Technik',
-    'Fussball',
-    'Bildung',
-    'Familie',
-    'Dynastien',
-    'Verkehr',
-    'Geografie',
-    'Adel',
-    'Schiffahrt',
-    'Sport',
-    'Botanik',
-    'Geschichte',
+    'Wissenschaft',
+    'Eishockey',
     'Musik',
+    'Botanik',
+    'Religion',
+    'Schienenverkehr',
+    'Geschichte',
+    'Recht',
+    'Wettkampf',
     'Film',
-    'Könige',
-    'Kirchen',
+    'Französisch-Spanische Geschichte',
+    'Bildung/Wissenschaft',
+    'Schifffahrt',
+    'Sport',
+    'Deutsche Geschichte',
     'Politik',
-    'Hockey',
-    'Definitionen',
-    'Deutschland',
+    'Fussball',
+    'Österreichische Geschichte',
+    'Geografie',
+    'US Geschichte',
 )
 
-with open(join(dirname(__file__), './model/topic_model.pkl'), 'rb') as f:
+with open(join(dirname(__file__), './model/topic_model_2.pkl'), 'rb') as f:
     topic_model: NMF = pickle.load(f)
 
-with open(join(dirname(__file__), './model/vocab.pkl'), 'rb') as f:
+with open(join(dirname(__file__), './model/vocab_2.pkl'), 'rb') as f:
     vocab = pickle.load(f)
 
 cv = CountVectorizer(
-    min_df=1,
-    max_df=0.6,
+    min_df=200,
+    max_df=0.2,
     ngram_range=(1, 2),
     token_pattern=None,
     tokenizer=lambda doc: doc,

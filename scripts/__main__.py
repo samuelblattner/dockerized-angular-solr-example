@@ -69,7 +69,7 @@ if __name__ == '__main__':
         except HTTPError as e:
             sys.stdout.write('Index already exists, will exit...\n')
             retry_required = False
-            exit(0)
+            # exit(0)
         except (RemoteDisconnected, URLError):
             sys.stdout.write('Solr container not yet available, retrying in 5 seconds...\n')
             sleep(5)
@@ -107,7 +107,7 @@ if __name__ == '__main__':
 
         for r, row in enumerate(reader):
 
-            if r >= args.max_docs:
+            if r >= int(args.max_docs):
                 break
 
             text = row.get('source')
@@ -119,7 +119,9 @@ if __name__ == '__main__':
 
             batch.append(
                 {
-                    'id': hashlib.md5('{}{}'.format(text, summary).encode('utf-8')).hexdigest(),
+                    'id': hashlib.md5('{}{}'.format(
+                        text, summary
+                    ).encode('utf-8')).hexdigest(),
 
                     'topic': predict_topic(text, top_n=2),
                     'text': text,
@@ -133,13 +135,14 @@ if __name__ == '__main__':
 
             if len(batch) > BATCH_SIZE:
 
-                text_tags_batch = list(nlp.pipe(batch_texts, disable=['parser', 'ner', 'textcat']))
-                text_nouns_batch = [sum([1 for tag in tags if tag.pos_ == 'NOUN']) for tags in text_tags_batch]
-                text_verbs_batch = [sum([1 for tag in tags if tag.pos_ in ('VERB', 'AUX')]) for tags in text_tags_batch]
+                text_tags_batch = list(
+                    nlp.pipe(batch_texts, disable=['parser', 'ner', 'textcat'])
+                )
+                text_nouns_batch = [
+                    sum([1 for tag in tags if tag.pos_ == 'NOUN']) for tags in text_tags_batch]
 
-                summary_tags_batch = list(nlp.pipe(batch_summaries, disable=['parser', 'ner', 'textcat']))
-                summary_nouns_batch = [sum([1 for tag in tags if tag.pos_ == 'NOUN']) for tags in summary_tags_batch]
-                summary_verbs_batch = [sum([1 for tag in tags if tag.pos_ in ('VERB', 'AUX')]) for tags in summary_tags_batch]
+                text_verbs_batch = [
+                    sum([1 for tag in tags if tag.pos_ in ('VERB', 'AUX')]) for tags in text_tags_batch]
 
                 for item, item['text_num_nouns'], item['text_num_verbs'] in zip(batch, text_nouns_batch, text_verbs_batch):
                    pass

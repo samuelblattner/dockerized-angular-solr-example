@@ -1,6 +1,9 @@
 Solr Index
 ==========
 
+Der Index wird automatisch mit Apache Solr erzeugt und befüllt.
+Dieser Abschnitt beschreibt einerseits das Schema, das den Index beschreibt und andererseits den automatischen Ablauf.
+
 Schema
 ------
 Die Erzeugung eines Schemas für den Index wird zunächst Solr überlassen.
@@ -24,11 +27,19 @@ Damit wird Anforderung Nr. 3 entsprochen (Zeilen 12 - 19).
 
 Automatische Erzeugung
 ----------------------
-The core is automatically created when the docker container is initialized.
-A python script *create_index.py* automatically tries to create the core and exits without error if the core already exists.
+Sobald der Solr-Container verfügbar ist, wird versucht, den Index *summaries* zu erzeugen.
+Existiert er bereits, wird der Prozess abgebrochen.
 
-.. literalinclude:: ../../../scripts/index/create_index.py
+.. literalinclude:: ../../../scripts/__main__.py
    :language: python
-   :lines: 52-69
+   :lines: 57-72
    :linenos:
 
+Anschliessend werden die Dokumente stapelweise indexiert:
+
+.. literalinclude:: ../../../scripts/__main__.py
+   :language: python
+   :lines: 120-150
+   :linenos:
+
+Zur eindeutigen Identifikation wird die id mittels Hash basierend auf dem Inhalt der Dokumente indexiert.

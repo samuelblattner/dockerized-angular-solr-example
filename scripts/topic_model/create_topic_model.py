@@ -24,6 +24,14 @@ cv = CountVectorizer(
     tokenizer=lambda doc: doc,
     preprocessor=lambda doc: doc
 )
+
+cv_features = cv.fit_transform(
+    map(lambda text: normalize_texts(list(text))[0], filter(
+        lambda row: row[0], get_summarization_iter(DATA_PATH, limit=N_DOCS)
+    ))
+)
+vocab = np.array(cv.get_feature_names())
+
 nmf_model = NMF(
     n_components=N_TOPICS,
     solver='cd',
@@ -33,13 +41,6 @@ nmf_model = NMF(
     l1_ratio=0.85
 )
 
-cv_features = cv.fit_transform(
-    map(lambda text: normalize_texts(list(text))[0], filter(
-        lambda row: row[0], get_summarization_iter(DATA_PATH, limit=N_DOCS)
-    ))
-)
-
-vocab = np.array(cv.get_feature_names())
 doc_topics = nmf_model.fit_transform(cv_features)
 
 with open('./model/topic_model.pkl', 'wb') as f:
