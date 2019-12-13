@@ -14,6 +14,7 @@ last_count = 0
 def flush_batch(batch, url):
     global bar
     bar.update(bar.value + len(batch))
+    sys.stdout.flush()
     r = request.Request(
         url=url,
         data=json.dumps(batch).encode('utf-8'),
