@@ -69,7 +69,7 @@ if __name__ == '__main__':
         except HTTPError as e:
             sys.stdout.write('Index already exists, will exit...\n')
             retry_required = False
-            # exit(0)
+            exit(0)
         except (RemoteDisconnected, URLError):
             sys.stdout.write('Solr container not yet available, retrying in 5 seconds...\n')
             sleep(5)
